@@ -1,6 +1,7 @@
 'use strict';
 const fs = require('fs');
 const util = require('util');
+const { model } = require('mongoose');
 const readdir = util.promisify(fs.readdir);
 
 const modelsFolder = `${__dirname}/../models`;
@@ -21,8 +22,9 @@ const modelsFolder = `${__dirname}/../models`;
  */
 const load = (req, res, next) => {
   let modelName = req.params.model.replace(/[^a-z0-9-_]/gi, '');
-  const Model = require(`../models/${modelName}/${modelName}-model.js`);
-  req.model = new Model();
+  const Model = require(`../models/${modelName}/${modelName}-schema.js`);
+  req.model = Model;
+  console.log(req.model, 'model name line 25')
   next();
 };
 

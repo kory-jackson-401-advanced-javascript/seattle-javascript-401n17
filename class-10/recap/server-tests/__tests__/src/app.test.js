@@ -7,13 +7,19 @@ const mockRequest = supergoose(app);
 
 describe('api server', () => {
 
-  it('should respond with a 404 on an invalid route', () => {
+  it('should respond with a 404 on an invalid route', async () => {
+    let results = await mockRequest.get('/anything');
+        
+    expect(results.status).toBe(404);
   });
 
-  it('should respond with a 404 on an invalid method', () => {
+  it('should respond with a 404 on an invalid method', async () => {
+    let results = await mockRequest.del('/api/v1/categories');
+      
+    expect(results.status).toBe(404);
   });
 
-  it('should respond properly on a get request to /api/v1/categories', () => {
+  it('should respond properly on a get request to /api/v1/categories', async () => {
   });
 
   it('should return a new record following a post to /api/v1/categories', () => {

@@ -1,6 +1,10 @@
 'use strict';
 
 const cwd = process.cwd();
+const errorHandler = require('./models/middleware/500.js');
+const notFoundError = require('./models/middleware/404.js');
+const paramMW = require('./models/middleware/param.js');
+
 
 // 3rd Party Resources
 const express = require('express');
@@ -16,12 +20,11 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 // Custom Middleware
-app.param('model', (req, res, next) => {
-  let modelName = req.params.model.replace(/[^a-z0-9-_]/gi, '');
-  const Model = require(`./models/${modelName}/${modelName}-model.js`);
-  req.model = new Model();
-  next();
-});
+app.param('model', paramMW);
+
+
+
+
 
 // Routes
 app.get('/api/v1/:model', handleGetAll);
@@ -71,15 +74,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Catchalls
-app.use((req, res, next) => {
-  let error = { error: 'Resource Not Found' };
-  res.status(404).json(error).end();
-});
 
-app.use((err, req, res, next) => {
-  let error = { error: err };
-  res.status(500).json(error).end();
-});
+// app.use(errorHandler);
+app.use('*', notFoundError);
 
 /**
  * Start Server on specified port
